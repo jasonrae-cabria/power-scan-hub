@@ -81,7 +81,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [showForm, setShowForm] = useState(false);
   const [newDevice, setNewDevice] = useState(INITIAL_FORM_STATE);
-  const [editingId, setEditingId] = useState(null); // Track natin kung may ine-edit
+  const [editingId, setEditingId] = useState(null); 
 
   const allDevices = [...customDevices, ...ALL_APPLIANCES];
   const categoryOptions = CATEGORIES.filter((cat) => cat !== "All");
@@ -95,7 +95,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
   });
 
   const handleEdit = (e, app) => {
-    e.stopPropagation(); // Para hindi bumukas yung main modal
+    e.stopPropagation(); 
     setEditingId(app.id);
     setNewDevice({
       name: app.name,
@@ -105,7 +105,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
       description: app.description,
     });
     setShowForm(true);
-    window.scrollTo({ top: 400, behavior: 'smooth' }); // Scroll pataas sa form
+    window.scrollTo({ top: 400, behavior: 'smooth' }); 
   };
 
   const handleDelete = (e, id) => {
@@ -123,7 +123,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
 
     let updatedDevices;
     if (editingId) {
-      // UPDATE EXISTING
       updatedDevices = customDevices.map(d => d.id === editingId ? {
         ...d,
         name: newDevice.name.trim(),
@@ -155,7 +154,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
 
   return (
     <section className="space-y-8">
-      {/* Header section... (same as before) */}
       <div className="rounded-[2.5rem] border border-white/10 bg-slate-950/70 p-10 shadow-2xl backdrop-blur-xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -167,7 +165,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
       </div>
 
       <div className="rounded-[2rem] border border-slate-800 bg-slate-900/70 p-8">
-        {/* Search and Category Filters... (same as before) */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex-1 flex items-center">
             <input
@@ -180,6 +177,19 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
             <button type="button" onClick={() => setSearchTerm('')} className="ml-3 text-slate-400 hover:text-cyan-400 transition-colors">
               {searchTerm ? '✕' : '🔍'}
             </button>
+          </div>
+          
+          {/* Categories bar */}
+          <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${activeCategory === cat ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -267,7 +277,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
             <div key={app.id} onClick={() => setSelectedApp(app)}
               className="relative bg-slate-900/40 border border-slate-800 p-3 md:p-6 rounded-[2rem] hover:bg-slate-800/40 hover:border-cyan-500 cursor-pointer transition-all group active:scale-95">
               
-              {/* EDIT/DELETE BUTTONS PARA SA CUSTOM DEVICES LANG */}
               {isCustom && (
                 <div className="absolute top-4 right-4 flex gap-2 z-10">
                   <button onClick={(e) => handleEdit(e, app)} className="p-2 bg-slate-800 rounded-lg hover:text-cyan-400 text-slate-400 transition-colors">

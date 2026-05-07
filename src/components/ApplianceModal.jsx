@@ -23,13 +23,12 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
 
   if (!selectedApp) return null;
 
-  // SMART LOGIC: Typical Daily Usage based on Category
   const getTypicalHours = (category) => {
     const cat = category?.toUpperCase() || "";
-    if (cat.includes("KITCHEN") || cat.includes("COOKING")) return 0.5; // 30 mins
-    if (cat.includes("COOLING") || cat.includes("FAN")) return 12;      // 12 hours
-    if (cat.includes("ENTERTAINMENT") || cat.includes("TV")) return 4;  // 4 hours
-    return 1; // Default 1 hour for others
+    if (cat.includes("KITCHEN") || cat.includes("COOKING")) return 0.5;
+    if (cat.includes("COOLING") || cat.includes("FAN")) return 12;      
+    if (cat.includes("ENTERTAINMENT") || cat.includes("TV")) return 4;  
+    return 1;
   };
 
   const dailyHours = getTypicalHours(selectedApp.category);
@@ -37,12 +36,10 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-2 md:p-4">
-      {/* Reduced padding and max-height for mobile optimization */}
       <div className="bg-[#0b1220] border border-slate-800 w-full max-w-2xl rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-8 relative shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[95vh] overflow-y-auto md:overflow-visible">
         
         <button onClick={() => setSelectedApp(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white text-xl md:text-2xl font-bold z-10">✕</button>
 
-        {/* Header Section: Scaled down for mobile */}
         <div className="flex flex-col gap-2 mb-3 md:mb-6">
           <div className="flex items-center gap-3 md:gap-4">
             <div className="w-10 h-10 md:w-16 md:h-16 bg-cyan-500 rounded-2xl md:rounded-3xl flex items-center justify-center text-slate-950 text-xl md:text-3xl font-black">⚡</div>
@@ -56,12 +53,10 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
           </div>
         </div>
 
-        {/* Description: More compact on mobile */}
         <p className="text-slate-400 text-[10px] md:text-sm leading-tight md:leading-relaxed mb-3 md:mb-6 bg-slate-900/60 p-3 rounded-2xl border border-slate-800 line-clamp-2 md:line-clamp-none">
           {selectedApp.description}
         </p>
 
-        {/* Main Stats Grid: Reduced vertical padding */}
         <div className="grid grid-cols-3 gap-2 mb-3 md:mb-6">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/70 py-1.5 md:py-4 px-1 text-center">
             <p className="text-[8px] md:text-[10px] uppercase tracking-tighter md:tracking-[0.35em] text-slate-500 mb-1">Wattage</p>
@@ -80,7 +75,7 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
         {/* QR and Estimate Section */}
         <div className="grid gap-3 md:gap-6 md:grid-cols-[auto_1fr] items-center">
           <div ref={qrRef} className="mx-auto rounded-3xl bg-white p-2 md:p-4 shadow-2xl shadow-cyan-500/15">
-            {/* Reduced size for mobile to save space */}
+
             <QRCodeSVG 
               value={JSON.stringify({
                 name: selectedApp.name, 

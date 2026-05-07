@@ -5,7 +5,7 @@ export default function AboutWeb({ settings }) {
 
   return (
     <section className="space-y-6 mt-8">
-      {/* 4 STEPS GRID - Naka 2 columns na sa mobile (grid-cols-2) */}
+      {/* 4 STEPS GRID */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
         {/* Step 1 */}
         <div className={`rounded-[1.5rem] md:rounded-[2rem] border transition-all p-4 md:p-8 ${isDark ? 'border-slate-800 bg-slate-900/70' : 'border-blue-100 bg-white'}`}>

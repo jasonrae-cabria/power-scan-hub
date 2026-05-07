@@ -15,10 +15,8 @@ export default function SmartRemote() {
   const tvDisplay = tvPower ? `Connected • ${tvInput}` : "Powered Off";
   const tvVolumeLabel = tvMuted ? 'Muted' : `${tvVolume}%`;
 
-  // Function para sa future real-life connection
   const sendCommand = (command) => {
     setTvAction(command);
-    // Dito ilalagay ang fetch(`http://192.168.1.XX/api/v1/remote/${command}`)
     console.log(`Sending ${command} to ${tvBrand} TV at IP: 192.168.x.x`);
   };
 
@@ -33,7 +31,7 @@ export default function SmartRemote() {
             Control your devices via local network IP. Select your TV brand to sync protocols.
           </p>
           
-          {/* Brand Selection - Mas Maliit na Version */}
+          {/* Brand Selection */}
           <div className="mt-6 inline-block relative">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2 ml-1">Device Brand</p>
             <button
@@ -74,7 +72,7 @@ export default function SmartRemote() {
         </div>
       </div>
 
-      {/* Right Panel: Physical Remote Layout */}
+      {/* Physical Remote Layout */}
       <div className="rounded-[2.5rem] border border-slate-800 bg-slate-900/70 p-8 shadow-2xl">
         <div className="flex flex-col items-center gap-8">
           
@@ -118,7 +116,7 @@ export default function SmartRemote() {
             </div>
           </div>
 
-          {/* Volume & Input - Balanced Grid */}
+          {/* Volume & Input */}
           <div className="grid grid-cols-2 gap-4 w-full">
             <div className="flex flex-col gap-2">
               <button

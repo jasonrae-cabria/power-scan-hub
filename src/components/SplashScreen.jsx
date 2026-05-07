@@ -5,10 +5,9 @@ export default function SplashScreen({ onFinish }) {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Kusang mawawala pagkatapos ng 2 seconds
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onFinish, 500); // Bigyan ng konting oras para matapos ang animation
+      setTimeout(onFinish, 500);
     }, 2000);
 
     return () => clearTimeout(timer);

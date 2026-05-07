@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, Calendar, Trash2, Plus, Search } from 'lucide-react';
+import { ChevronDown, Trash2, Plus, Search } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { ALL_APPLIANCES } from './AppliancesList';
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function Scheduler({ rate }) {
-  const { devices: customDevices } = useData();
+  const { devices: customDevices, scheduleEntries, setScheduleEntries, saveData } = useData();
   
-  // PAGSAMAHIN ANG LISTAHAN PARA SA DROPDOWN
   const allDevices = [...customDevices, ...ALL_APPLIANCES];
 
   const [scheduleMonth, setScheduleMonth] = useState(new Date());
@@ -17,21 +16,10 @@ export default function Scheduler({ rate }) {
   const [scheduleMinutes, setScheduleMinutes] = useState(30);
   const [showEntryPanel, setShowEntryPanel] = useState(false);
   
-  // Dropdown States
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownSearch, setDropdownSearch] = useState("");
 
-  // LOCAL STORAGE PERSISTENCE: Dito natin sinisave para hindi mawala pag refresh
-  const [scheduleEntries, setScheduleEntries] = useState(() => {
-    const saved = localStorage.getItem('power_scan_schedule');
-    return saved ? JSON.parse(saved) : {};
-  });
 
-  useEffect(() => {
-    localStorage.setItem('power_scan_schedule', JSON.stringify(scheduleEntries));
-  }, [scheduleEntries]);
-
-  // Handle default device selection
   useEffect(() => {
     if (!scheduleDeviceId && allDevices.length > 0) {
       setScheduleDeviceId(allDevices[0].id);
@@ -70,21 +58,24 @@ export default function Scheduler({ rate }) {
   const selectedDayEntries = scheduleEntries[selectedScheduleDate] || [];
   const selectedDayPreview = selectedDayEntries.slice(0, 2);
 
-  // Filter para sa dropdown search
   const filteredInDropdown = allDevices.filter(d => 
     d.name.toLowerCase().includes(dropdownSearch.toLowerCase())
   );
 
   const handleRemoveEntry = (entryId) => {
-    setScheduleEntries((prev) => {
-      const currentDay = prev[selectedScheduleDate] ?? [];
-      const updatedDay = currentDay.filter((entry) => entry.id !== entryId);
-      if (updatedDay.length === 0) {
-        const { [selectedScheduleDate]: removed, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [selectedScheduleDate]: updatedDay };
-    });
+    const currentDay = scheduleEntries[selectedScheduleDate] ?? [];
+    const updatedDay = currentDay.filter((entry) => entry.id !== entryId);
+    
+    let newEntries;
+    if (updatedDay.length === 0) {
+      const { [selectedScheduleDate]: removed, ...rest } = scheduleEntries;
+      newEntries = rest;
+    } else {
+      newEntries = { ...scheduleEntries, [selectedScheduleDate]: updatedDay };
+    }
+
+    setScheduleEntries(newEntries);
+    saveData({ scheduleEntries: newEntries });
   };
 
   const handleAddEntry = (e) => {
@@ -97,16 +88,17 @@ export default function Scheduler({ rate }) {
       watts: selectedDevice.watts,
       minutes: scheduleMinutes,
     };
-    setScheduleEntries((prev) => {
-      const currentDay = prev[selectedScheduleDate] ?? [];
-      return { ...prev, [selectedScheduleDate]: [...currentDay, entry] };
-    });
+
+    const currentDay = scheduleEntries[selectedScheduleDate] ?? [];
+    const newEntries = { ...scheduleEntries, [selectedScheduleDate]: [...currentDay, entry] };
+    
+    setScheduleEntries(newEntries);
+    saveData({ scheduleEntries: newEntries });
     setScheduleMinutes(30);
   };
 
   return (
     <section className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-      {/* LEFT PANEL: CALENDAR (Same UI) */}
       <div className="rounded-[2rem] border border-slate-800 bg-slate-900/70 p-6 md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -170,7 +162,6 @@ export default function Scheduler({ rate }) {
         </div>
       </div>
 
-      {/* RIGHT PANEL: ADD ENTRY & PREVIEW */}
       <div className="flex flex-col gap-6">
         <div className="rounded-[2rem] border border-slate-800 bg-slate-900/70 p-6 md:p-8">
           <div className="mb-6">
@@ -183,7 +174,6 @@ export default function Scheduler({ rate }) {
           </div>
 
           <form onSubmit={handleAddEntry} className="space-y-5">
-            {/* ASTIG DROPDOWN W/ SEARCH (Identical to Calculator) */}
             <div className="space-y-2 relative">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Select Appliance</p>
               <button 
@@ -256,7 +246,6 @@ export default function Scheduler({ rate }) {
             </button>
           </form>
 
-          {/* Preview Section (Same UI) */}
           <div className="mt-10 space-y-4">
             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Entries for today</h4>
             {selectedDayEntries.length ? (
@@ -298,7 +287,6 @@ export default function Scheduler({ rate }) {
         </div>
       </div>
 
-      {/* FULL ENTRIES MODAL (Same UI) */}
       {showEntryPanel && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
           <div className="w-full max-w-2xl rounded-[2.5rem] border border-slate-800 bg-slate-900 p-6 md:p-10 shadow-2xl">
@@ -336,3 +324,4 @@ export default function Scheduler({ rate }) {
     </section>
   );
 }
+

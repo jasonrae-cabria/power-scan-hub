@@ -6,11 +6,11 @@ export default function Settings({ settings, setSettings }) {
 
   const handleUpdate = (updatedSettings) => {
     setSettings(updatedSettings);
+    
     saveData({ settings: updatedSettings });
   };
 
   return (
-    /* Dinagdagan ko ng pb-24 dito para hindi matakpan ng badge ang footer text */
     <section className="space-y-8 pb-6"> 
       {/* Header Section */}
       <div className={`rounded-[2.5rem] border transition-all p-10 shadow-2xl backdrop-blur-xl ${
@@ -46,7 +46,7 @@ export default function Settings({ settings, setSettings }) {
               Full Name
               <input
                 type="text"
-                value={settings.userName}
+                value={settings.userName || ""}
                 onChange={(event) => handleUpdate({ ...settings, userName: event.target.value })}
                 placeholder="Rae Debo"
                 className={`mt-2 w-full rounded-3xl border px-4 py-3 outline-none focus:ring-2 transition ${
@@ -62,7 +62,7 @@ export default function Settings({ settings, setSettings }) {
               Age
               <input
                 type="number"
-                value={settings.userAge}
+                value={settings.userAge || ""}
                 onChange={(event) => handleUpdate({ ...settings, userAge: event.target.value })}
                 placeholder="20"
                 className={`mt-2 w-full rounded-3xl border px-4 py-3 outline-none focus:ring-2 transition ${
@@ -77,7 +77,7 @@ export default function Settings({ settings, setSettings }) {
             }`}>
               Address
               <textarea
-                value={settings.userAddress}
+                value={settings.userAddress || ""}
                 onChange={(event) => handleUpdate({ ...settings, userAddress: event.target.value })}
                 placeholder="123 Main Street, Manila, Philippines"
                 rows="3"
@@ -195,8 +195,7 @@ export default function Settings({ settings, setSettings }) {
         </div>
       </div>
       
-      {/* Nilagyan ko ng mt-8 para mas may gap pa */}
-      <p className="text-center text-xs text-slate-600 mt-8">All changes are auto-saved to Firebase Cloud.</p>
+      <p className="text-center text-xs text-slate-600 mt-8">All changes are auto-saved to your private device profile.</p>
     </section>
   );
 }

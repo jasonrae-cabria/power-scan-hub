@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { ChevronDown, Search } from 'lucide-react'; // Nagdagdag ako ng Search icon para sa filter
+import { ChevronDown, Search } from 'lucide-react'; 
 import { useData } from '../context/DataContext';
 import { ALL_APPLIANCES } from './AppliancesList';
 
 export default function Calculator({ rate }) {
-  const { devices: customDevices } = useData(); // Kunin ang personal devices galing Firebase
+  const { devices: customDevices } = useData(); 
   const [calcWattage, setCalcWattage] = useState(100);
   const [calcHoursPerDay, setCalcHoursPerDay] = useState(2);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("Pick a saved appliance (optional)");
-  const [dropdownSearch, setDropdownSearch] = useState(""); // Para madaling hanapin sa 300+ list
+  const [dropdownSearch, setDropdownSearch] = useState(""); 
 
-  // PAGSAMAHIN ANG LISTAHAN
   const allDevices = [...customDevices, ...ALL_APPLIANCES];
 
   const minuteCost = (calcWattage / 1000) * rate / 60;
@@ -22,10 +21,9 @@ export default function Calculator({ rate }) {
     setCalcWattage(device.watts);
     setSelectedLabel(`${device.name} — ${device.watts}W`);
     setIsOpen(false);
-    setDropdownSearch(""); // Reset search pag nakapili na
+    setDropdownSearch("");
   };
 
-  // Filter logic para sa dropdown para hindi ka malunod sa 342 lines
   const filteredInDropdown = allDevices.filter(d => 
     d.name.toLowerCase().includes(dropdownSearch.toLowerCase()) ||
     (d.brand && d.brand.toLowerCase().includes(dropdownSearch.toLowerCase()))

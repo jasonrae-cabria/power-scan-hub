@@ -4,10 +4,18 @@ import { db } from '../firebase';
 
 const DataContext = createContext();
 
+const getOrCreateDeviceId = () => {
+  let id = localStorage.getItem('power_scan_device_id');
+  if (!id) {
+    id = 'user_' + Math.random().toString(36).substring(2, 11);
+    localStorage.setItem('power_scan_device_id', id);
+  }
+  return id;
+};
+
 export const DataProvider = ({ children }) => {
   const [devices, setDevices] = useState([]);
   const [scheduleEntries, setScheduleEntries] = useState({});
-  // Binago natin 'to para mag-match sa App.jsx mo
   const [settings, setSettings] = useState({
     darkMode: true,
     notifications: true,
@@ -19,24 +27,25 @@ export const DataProvider = ({ children }) => {
     userAddress: "",
   });
 
+  const deviceId = getOrCreateDeviceId();
+
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "users", "guest-user"), (doc) => {
+    const unsub = onSnapshot(doc(db, "users", deviceId), (doc) => {
       if (doc.exists()) {
         const data = doc.data();
         setDevices(data.devices || []);
         setScheduleEntries(data.scheduleEntries || {});
-        // Dito natin kukunin yung settings galing Firebase
         if (data.settings) {
           setSettings(data.settings);
         }
       }
     });
     return () => unsub();
-  }, []);
+  }, [deviceId]);
 
   const saveData = async (newData) => {
     try {
-      await setDoc(doc(db, "users", "guest-user"), newData, { merge: true });
+      await setDoc(doc(db, "users", deviceId), newData, { merge: true });
     } catch (error) {
       console.error("Error saving data: ", error);
     }
@@ -45,7 +54,7 @@ export const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider value={{ 
       devices, setDevices, 
-      settings, setSettings, // Ito na yung gagamitin natin sa App.jsx
+      settings, setSettings,
       scheduleEntries, setScheduleEntries, 
       saveData 
     }}>
