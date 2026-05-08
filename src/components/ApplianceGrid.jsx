@@ -93,9 +93,11 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
   const filteredAppliances = allDevices
     .filter(app => {
       const matchesCategory = activeCategory === 'All' || app.category.toLowerCase() === activeCategory.toLowerCase();
+      
       const matchesSearch = searchTerm === '' || 
         app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         (app.brand && app.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+      
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
