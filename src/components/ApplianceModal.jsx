@@ -41,7 +41,7 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
   const monthlyCost = (selectedApp.watts / 1000) * rate * dailyHours * 30;
   const monthlyWatts = (selectedApp.watts * dailyHours * 30) / 1000; 
 
-  const baseUrl = "https://power-scan-hub.vercel.app/scan";
+  const baseUrl = "https://power-scan-hub.vercel.app/#/scan";
   const queryParams = new URLSearchParams({
     name: selectedApp.name,
     brand: selectedApp.brand || "Generic",
@@ -91,7 +91,6 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
           </div>
         </div>
 
-        {/* QR and Estimate Section */}
         <div className="grid gap-3 md:gap-6 md:grid-cols-[auto_1fr] items-center">
           <div ref={qrRef} className="mx-auto rounded-3xl bg-white p-2 md:p-4 shadow-2xl shadow-cyan-500/15">
             <QRCodeSVG 

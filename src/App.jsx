@@ -27,20 +27,28 @@ export default function App() {
   const rate = settings.meralcoRate;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const isScanPath = window.location.pathname.includes('/scan');
+    const isCleanPath = window.location.pathname.includes('/scan');
+    const isHashPath = window.location.hash.includes('/scan');
     
-    if (isScanPath && params.get('name')) {
-      const appData = {
-        name: params.get('name'),
-        brand: params.get('brand'),
-        watts: parseFloat(params.get('watts')),
-        category: params.get('cat'),
-        description: params.get('desc'),
-        isScanned: true // marker lang
-      };
-      setScannedApp(appData);
-      setCurrentTab("SCAN_RESULT"); 
+    if (isCleanPath || isHashPath) {
+      const queryString = isHashPath 
+        ? window.location.hash.split('?')[1] 
+        : window.location.search;
+        
+      const params = new URLSearchParams(queryString);
+      
+      if (params.get('name')) {
+        const appData = {
+          name: params.get('name'),
+          brand: params.get('brand') || "Generic",
+          watts: parseFloat(params.get('watts')) || 0,
+          category: params.get('cat') || "General",
+          description: params.get('desc') || "",
+          isScanned: true 
+        };
+        setScannedApp(appData);
+        setCurrentTab("SCAN_RESULT"); 
+      }
     }
   }, []);
 
@@ -66,14 +74,14 @@ export default function App() {
                 selectedApp={scannedApp} 
                 setSelectedApp={(val) => {
                   if (!val) {
-                    window.location.href = "/";
+                    window.location.href = window.location.origin;
                   }
                 }} 
                 rate={rate} 
               />
               <button 
-                onClick={() => window.location.href = "/"}
-                className="mt-8 px-6 py-2 rounded-full bg-slate-800 text-white text-xs font-bold uppercase tracking-widest"
+                onClick={() => window.location.href = window.location.origin}
+                className="mt-8 px-6 py-2 rounded-full bg-slate-800 text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-700 transition-colors"
               >
                 Go to Main Dashboard
               </button>
@@ -136,7 +144,7 @@ export default function App() {
 
         <MeralcoBadge rate={rate} />
         
-        {/* Regular Modal */}
+        {/* Regular Modal for standard interactions */}
         {currentTab !== "SCAN_RESULT" && (
           <ApplianceModal selectedApp={selectedApp} setSelectedApp={setSelectedApp} rate={rate} />
         )}
