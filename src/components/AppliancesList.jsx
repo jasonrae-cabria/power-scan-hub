@@ -244,11 +244,10 @@ export const ALL_APPLIANCES = [
   { id: "la010", name: "Flat Iron (Standard)", category: "Laundry", subcategory: "Ironing", brand: "Panasonic", watts: 1000, description: "Standard dry iron for pressing clothes. Non-stick soleplate for smooth gliding over fabrics.", icon: "Shirt" },
   { id: "la011", name: "Steam Iron", category: "Laundry", subcategory: "Ironing", brand: "Philips", watts: 1400, description: "Steam iron that removes wrinkles faster with steam burst function. Self-cleaning and anti-drip features.", icon: "Shirt" },
   { id: "la012", name: "Steam Iron (Premium)", category: "Laundry", subcategory: "Ironing", brand: "Tefal", watts: 2400, description: "High-power steam iron with large water tank and continuous steam output. Professional pressing results at home.", icon: "Shirt" },
-  { id: "la013", name: "Garment Steamer (Handheld)", category: "Laundry", subcategory: "Ironing", brand: "Conair", watts: 800, description: "Portable handheld steamer for quick wrinkle removal. Perfect for delicate fabrics and last-minute touch-ups.", icon: "Shirt" },
-  { id: "la014", name: "Garment Steamer (Standing)", category: "Laundry", subcategory: "Ironing", brand: "Philips", watts: 1500, description: "Standing garment steamer with large water tank. Continuous steam for efficiently pressing multiple garments.", icon: "Shirt" },
-  { id: "la015", name: "Sewing Machine (Basic)", category: "Laundry", subcategory: "Sewing", brand: "Singer", watts: 75, description: "Basic mechanical sewing machine for simple repairs and alterations. Compact and beginner-friendly.", icon: "Scissors" },
-  { id: "la016", name: "Sewing Machine (Computerized)", category: "Laundry", subcategory: "Sewing", brand: "Brother", watts: 100, description: "Computerized sewing machine with built-in stitch patterns. LCD display and automatic features for precision sewing.", icon: "Scissors" },
- 
+  { id: "la013", name: "Spin Dryer", category: "Laundry", subcategory: "Drying", brand: "Sharp", watts: 250, description: "Standalone spin dryer commonly paired with manual washing machines. Removes water before line drying.", icon: "Wind" },
+  { id: "la014", name: "Garment Steamer", category: "Laundry", subcategory: "Ironing", brand: "Philips", watts: 1600, description: "Handheld or standing garment steamer for quick wrinkle removal. High wattage but used briefly.", icon: "Shirt" },
+  { id: "la015", name: "Sewing Machine", category: "Laundry", subcategory: "Clothing Care", brand: "Singer", watts: 70, description: "Electric sewing machine used for repairs, uniforms, and home sewing projects.", icon: "Shirt" },
+  
   // ENTERTAINMENT
   { id: "e001", name: "PlayStation 5", category: "Entertainment", subcategory: "Gaming", brand: "Sony", watts: 200, description: "Latest PlayStation console with 4K gaming, ray tracing, and ultra-fast SSD. Plays both physical and digital games.", icon: "Gamepad2" },
   { id: "e002", name: "PlayStation 4", category: "Entertainment", subcategory: "Gaming", brand: "Sony", watts: 150, description: "Previous-gen PlayStation with massive game library. Still excellent for casual and budget gamers.", icon: "Gamepad2" },
@@ -318,8 +317,6 @@ export const ALL_APPLIANCES = [
   { id: "h010", name: "Ceiling Ventilator", category: "HVAC", subcategory: "Ventilation", watts: 25, description: "Bathroom/kitchen ceiling ventilator for passive air exchange. Quiet operation with moisture sensor option.", icon: "Fan" },
   { id: "h011", name: "Misting Fan", category: "HVAC", subcategory: "Cooling", watts: 70, description: "Outdoor misting fan that sprays fine water mist for cooling. Popular in outdoor restaurants and events.", icon: "Fan" },
   { id: "h012", name: "Ceiling Fan with Heater", category: "HVAC", subcategory: "Multi-function", watts: 200, description: "Combination ceiling fan and heater for year-round comfort. Reversible blade direction for winter/summer use.", icon: "Fan" },
-  { id: "la013", name: "Spin Dryer", category: "Laundry", subcategory: "Drying", brand: "Sharp", watts: 250, description: "Standalone spin dryer commonly paired with manual washing machines. Removes water before line drying.", icon: "Wind" },
-  { id: "la014", name: "Garment Steamer", category: "Laundry", subcategory: "Ironing", brand: "Philips", watts: 1600, description: "Handheld or standing garment steamer for quick wrinkle removal. High wattage but used briefly.", icon: "Shirt" },
-  { id: "la015", name: "Sewing Machine", category: "Laundry", subcategory: "Clothing Care", brand: "Singer", watts: 70, description: "Electric sewing machine used for repairs, uniforms, and home sewing projects.", icon: "Shirt" },
+
 
 ];
