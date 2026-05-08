@@ -19,11 +19,30 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState("HOME");
   const [selectedApp, setSelectedApp] = useState(null);
   const [devices, setDevices] = useState(ALL_APPLIANCES);
-  
   const [showSplash, setShowSplash] = useState(true);
+  
+  const [scannedApp, setScannedApp] = useState(null);
   
   const { settings, setSettings } = useData();
   const rate = settings.meralcoRate;
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isScanPath = window.location.pathname.includes('/scan');
+    
+    if (isScanPath && params.get('name')) {
+      const appData = {
+        name: params.get('name'),
+        brand: params.get('brand'),
+        watts: parseFloat(params.get('watts')),
+        category: params.get('cat'),
+        description: params.get('desc'),
+        isScanned: true // marker lang
+      };
+      setScannedApp(appData);
+      setCurrentTab("SCAN_RESULT"); 
+    }
+  }, []);
 
   if (showSplash) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />;
@@ -33,9 +52,34 @@ export default function App() {
     <>
       <ConnectivityStatus />
       <div className={`min-h-screen animate-in fade-in duration-700 ${settings.darkMode ? 'bg-[#020617] text-white' : 'bg-white text-slate-950'} px-4 py-8 md:px-8 text-sm md:text-base font-sans`}>
-        <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        
+        {currentTab !== "SCAN_RESULT" && (
+          <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        )}
 
-        <div className="pt-16 md:pt-32 max-w-7xl mx-auto pb-0 md:pb-20">
+        <div className={currentTab === "SCAN_RESULT" ? "pt-4" : "pt-16 md:pt-32 max-w-7xl mx-auto pb-0 md:pb-20"}>
+          
+          {/* SCAN RESULT VIEW */}
+          {currentTab === 'SCAN_RESULT' && scannedApp && (
+            <div className="flex flex-col items-center justify-center min-h-[80vh] animate-in zoom-in duration-300">
+              <ApplianceModal 
+                selectedApp={scannedApp} 
+                setSelectedApp={(val) => {
+                  if (!val) {
+                    window.location.href = "/";
+                  }
+                }} 
+                rate={rate} 
+              />
+              <button 
+                onClick={() => window.location.href = "/"}
+                className="mt-8 px-6 py-2 rounded-full bg-slate-800 text-white text-xs font-bold uppercase tracking-widest"
+              >
+                Go to Main Dashboard
+              </button>
+            </div>
+          )}
+
           {currentTab === 'HOME' && (
             <section className="space-y-8">
               <div className={`rounded-[2.5rem] border px-4 py-8 md:px-12 md:py-12 shadow-2xl backdrop-blur-xl transition-all ${settings.darkMode ? 'border-white/10 bg-gradient-to-br from-slate-950/90 via-slate-900/70 to-slate-950/80' : 'border-blue-100 bg-white'}`}>
@@ -80,7 +124,6 @@ export default function App() {
               </div>
 
               <AboutWeb settings={settings} setCurrentTab={setCurrentTab} />
-              
             </section>
           )}
 
@@ -90,8 +133,13 @@ export default function App() {
           {currentTab === 'REMOTE' && <SmartRemote />}
           {currentTab === 'SETTINGS' && <Settings settings={settings} setSettings={setSettings} />}
         </div>
+
         <MeralcoBadge rate={rate} />
-        <ApplianceModal selectedApp={selectedApp} setSelectedApp={setSelectedApp} rate={rate} />
+        
+        {/* Regular Modal */}
+        {currentTab !== "SCAN_RESULT" && (
+          <ApplianceModal selectedApp={selectedApp} setSelectedApp={setSelectedApp} rate={rate} />
+        )}
       </div>
     </>
   );

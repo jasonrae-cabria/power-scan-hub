@@ -23,16 +23,35 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
 
   if (!selectedApp) return null;
 
-  const getTypicalHours = (category) => {
-    const cat = category?.toUpperCase() || "";
-    if (cat.includes("KITCHEN") || cat.includes("COOKING")) return 0.5;
-    if (cat.includes("COOLING") || cat.includes("FAN")) return 12;      
-    if (cat.includes("ENTERTAINMENT") || cat.includes("TV")) return 4;  
+  const getTypicalHours = (app) => {
+    const name = app.name?.toUpperCase() || "";
+    const category = app.category?.toUpperCase() || "";
+    if (name.includes("REFRIGERATOR") || name.includes("REF") || name.includes("WIFI") || name.includes("ROUTER") || name.includes("CCTV")) return 24;
+    if (name.includes("AIRCON") || name.includes("AIR CONDITIONER")) return 9; 
+    if (name.includes("FAN") || category.includes("HVAC")) return 12;
+    if (category.includes("OFFICE") || name.includes("PC") || name.includes("LAPTOP") || name.includes("MONITOR")) return 8;
+    if (category.includes("ENTERTAINMENT") || name.includes("TV") || name.includes("PLAYSTATION") || name.includes("XBOX")) return 5;
+    if (name.includes("CHARGER") || name.includes("PHONE") || name.includes("TABLET")) return 3;
+    if (category.includes("KITCHEN") || category.includes("COOKING")) return 0.5;
+    if (category.includes("LAUNDRY")) return 2;
     return 1;
   };
 
-  const dailyHours = getTypicalHours(selectedApp.category);
+  const dailyHours = getTypicalHours(selectedApp);
   const monthlyCost = (selectedApp.watts / 1000) * rate * dailyHours * 30;
+  const monthlyWatts = (selectedApp.watts * dailyHours * 30) / 1000; 
+
+  const baseUrl = "https://power-scan-hub.vercel.app/scan";
+  const queryParams = new URLSearchParams({
+    name: selectedApp.name,
+    brand: selectedApp.brand || "Generic",
+    watts: selectedApp.watts,
+    cat: selectedApp.category,
+    rate: rate,
+    desc: selectedApp.description
+  }).toString();
+  
+  const qrValue = `${baseUrl}?${queryParams}`;
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-2 md:p-4">
@@ -67,22 +86,16 @@ export default function ApplianceModal({ selectedApp, setSelectedApp, rate }) {
             <p className="text-lg md:text-3xl font-black text-cyan-400">₱{((selectedApp.watts/1000) * rate).toFixed(2)}</p>
           </div>
           <div className="rounded-2xl border border-slate-800 bg-slate-900/70 py-1.5 md:py-4 px-1 text-center">
-            <p className="text-[8px] md:text-[10px] uppercase tracking-tighter md:tracking-[0.35em] text-slate-500 mb-1">Per Minute</p>
-            <p className="text-lg md:text-3xl font-black text-blue-300">₱{((selectedApp.watts/1000) * rate / 60).toFixed(4)}</p>
+            <p className="text-[8px] md:text-[10px] uppercase tracking-tighter md:tracking-[0.35em] text-slate-500 mb-1">Monthly kWh</p>
+            <p className="text-lg md:text-3xl font-black text-blue-300">{monthlyWatts.toFixed(1)}</p>
           </div>
         </div>
 
         {/* QR and Estimate Section */}
         <div className="grid gap-3 md:gap-6 md:grid-cols-[auto_1fr] items-center">
           <div ref={qrRef} className="mx-auto rounded-3xl bg-white p-2 md:p-4 shadow-2xl shadow-cyan-500/15">
-
             <QRCodeSVG 
-              value={JSON.stringify({
-                name: selectedApp.name, 
-                watts: selectedApp.watts, 
-                costPerHour: `₱${((selectedApp.watts/1000) * rate).toFixed(2)}`,
-                category: selectedApp.category
-              })} 
+              value={qrValue} 
               size={120} 
               className="md:w-[180px] md:h-[180px]"
             />

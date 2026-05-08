@@ -208,7 +208,6 @@ export const ALL_APPLIANCES = [
   { id: "o036", name: "Label Printer", category: "Office", subcategory: "Peripherals", brand: "Brother", watts: 25, description: "Thermal label printer for organizing, shipping labels, and barcode printing.", icon: "Printer" },
   { id: "o037", name: "3D Printer (FDM)", category: "Office", subcategory: "Maker", brand: "Creality", watts: 200, description: "FDM 3D printer for creating physical objects from digital designs. Uses plastic filament to build layer by layer.", icon: "Printer" },
 
-  
   // OUTDOOR
   { id: "out001", name: "Water Pump (0.5 HP)", category: "Outdoor", subcategory: "Water", brand: "Shimizu", watts: 370, description: "Shallow well water pump for residential use. Provides consistent water pressure for household needs.", icon: "Droplets" },
   { id: "out002", name: "Water Pump (1.0 HP)", category: "Outdoor", subcategory: "Water", brand: "Grundfos", watts: 750, description: "Powerful water pump for deep wells or multi-story homes. Automatic pressure control for steady water flow.", icon: "Droplets" },
@@ -317,6 +316,4 @@ export const ALL_APPLIANCES = [
   { id: "h010", name: "Ceiling Ventilator", category: "HVAC", subcategory: "Ventilation", watts: 25, description: "Bathroom/kitchen ceiling ventilator for passive air exchange. Quiet operation with moisture sensor option.", icon: "Fan" },
   { id: "h011", name: "Misting Fan", category: "HVAC", subcategory: "Cooling", watts: 70, description: "Outdoor misting fan that sprays fine water mist for cooling. Popular in outdoor restaurants and events.", icon: "Fan" },
   { id: "h012", name: "Ceiling Fan with Heater", category: "HVAC", subcategory: "Multi-function", watts: 200, description: "Combination ceiling fan and heater for year-round comfort. Reversible blade direction for winter/summer use.", icon: "Fan" },
-
-
 ];
