@@ -55,6 +55,7 @@ const ICON_MAP = {
   Soap: "🧼",
   DoorOpen: "🚪",
   HardDrive: "💽",
+  Shirt: "👕",
 };
 
 
@@ -92,18 +93,21 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
   
   const filteredAppliances = allDevices
     .filter(app => {
-      const matchesCategory = activeCategory === 'All' || app.category.toLowerCase() === activeCategory.toLowerCase();
+      const matchesCategory = activeCategory === 'All' || 
+        app.category.trim().toLowerCase() === activeCategory.trim().toLowerCase();
       
-      const matchesSearch = searchTerm === '' || 
-        app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        (app.brand && app.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+      const cleanSearch = searchTerm.trim().toLowerCase();
+      const matchesSearch = cleanSearch === '' || 
+        app.name.toLowerCase().includes(cleanSearch) || 
+        (app.brand && app.brand.toLowerCase().includes(cleanSearch));
       
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
-      if (searchTerm === '') return 0;
-      const aStarts = a.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ? 1 : 0;
-      const bStarts = b.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ? 1 : 0;
+      if (!searchTerm) return 0;
+      const cleanSearch = searchTerm.trim().toLowerCase();
+      const aStarts = a.name.toLowerCase().startsWith(cleanSearch) ? 1 : 0;
+      const bStarts = b.name.toLowerCase().startsWith(cleanSearch) ? 1 : 0;
       return bStarts - aStarts;
     });
 
@@ -166,6 +170,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
 
   return (
     <section className="space-y-8">
+      {/* Header Section */}
       <div className="rounded-[2.5rem] border border-white/10 bg-slate-950/70 p-10 shadow-2xl backdrop-blur-xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -176,6 +181,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
         </div>
       </div>
 
+      {/* Control Section */}
       <div className="rounded-[2rem] border border-slate-800 bg-slate-900/70 p-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex-1 flex items-center">
@@ -195,7 +201,10 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setSearchTerm("");
+                }}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${activeCategory === cat ? 'bg-cyan-500 text-slate-950' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
               >
                 {cat}
@@ -204,6 +213,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
           </div>
         </div>
 
+        {/* Add Device Button & Form */}
         <div className="mt-8 flex flex-col items-center gap-4">
           <button
             type="button"
@@ -281,6 +291,7 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
         </div>
       </div>
 
+      {/* Grid Display */}
       <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
         {filteredAppliances.map((app) => {
           const isCustom = app.id.toString().startsWith('custom-');
