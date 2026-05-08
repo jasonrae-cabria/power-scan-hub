@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { ALL_APPLIANCES } from './AppliancesList';
 
-const CATEGORIES = ["All", "Kitchen", "Living Room", "Bedroom", "Bathroom", "Office", "Laundry", "Entertainment"];
+const CATEGORIES = ["All", "Kitchen", "Living Room", "Bedroom", "Bathroom", "Office", "Laundry", "Entertainment", "Outdoor", "HVAC",];
 
 const CATEGORY_ICON = {
   Kitchen: "CookingPot",
@@ -12,6 +12,8 @@ const CATEGORY_ICON = {
   Office: "Monitor",
   Laundry: "WashingMachine",
   Entertainment: "Gamepad2",
+  Outdoor: "TreePine",
+  HVAC: "Thermometer",
 };
 
 const ICON_MAP = {
@@ -64,6 +66,8 @@ const CATEGORY_GRADIENT = {
   Office: "from-emerald-500 to-teal-500",
   Laundry: "from-slate-500 to-slate-700",
   Entertainment: "from-amber-500 to-orange-500",
+  Outdoor: "from-green-500 to-emerald-500",
+  HVAC: "from-blue-500 to-cyan-500",
   All: "from-slate-600 to-slate-800",
 };
 
@@ -86,13 +90,20 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
   const allDevices = [...customDevices, ...ALL_APPLIANCES];
   const categoryOptions = CATEGORIES.filter((cat) => cat !== "All");
   
-  const filteredAppliances = allDevices.filter(app => {
-    const matchesCategory = activeCategory === 'All' || app.category.toLowerCase() === activeCategory.toLowerCase();
-    const matchesSearch = searchTerm === '' || 
-      app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (app.brand && app.brand.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  const filteredAppliances = allDevices
+    .filter(app => {
+      const matchesCategory = activeCategory === 'All' || app.category.toLowerCase() === activeCategory.toLowerCase();
+      const matchesSearch = searchTerm === '' || 
+        app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (app.brand && app.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (searchTerm === '') return 0;
+      const aStarts = a.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ? 1 : 0;
+      const bStarts = b.name.toLowerCase().startsWith(searchTerm.toLowerCase()) ? 1 : 0;
+      return bStarts - aStarts;
+    });
 
   const handleEdit = (e, app) => {
     e.stopPropagation(); 
@@ -133,7 +144,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
         icon: CATEGORY_ICON[newDevice.category] || 'Microwave',
       } : d);
     } else {
-      // ADD NEW
       const newItem = {
         id: `custom-${Date.now()}`,
         name: newDevice.name.trim(),
@@ -179,7 +189,6 @@ export default function ApplianceGrid({ setSelectedApp, rate }) {
             </button>
           </div>
           
-          {/* Categories bar */}
           <div className="flex overflow-x-auto pb-2 gap-2 no-scrollbar">
             {CATEGORIES.map(cat => (
               <button

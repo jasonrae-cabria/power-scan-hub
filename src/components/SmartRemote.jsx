@@ -1,9 +1,12 @@
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Circle } from 'lucide-react';
+import { useState, useEffect, useContext } from 'react';
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DataContext } from '../context/DataContext';
 
 const TV_BRANDS = ["Samsung", "LG", "Sony", "Redmi", "TCL", "Hisense", "Vizio", "Philips", "Panasonic", "Sharp"];
 
 export default function SmartRemote() {
+  const { remoteCommand, saveData } = useContext(DataContext);
+  
   const [tvBrand, setTvBrand] = useState("Samsung");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [tvPower, setTvPower] = useState(false);
@@ -12,13 +15,38 @@ export default function SmartRemote() {
   const [tvInput, setTvInput] = useState("HDMI 1");
   const [tvAction, setTvAction] = useState("Ready");
 
+  useEffect(() => {
+
+    if (remoteCommand && remoteCommand.action) {
+      const { action, value } = remoteCommand;
+      setTvAction(action);
+
+      if (action === 'Power On') setTvPower(true);
+      if (action === 'Power Off') setTvPower(false);
+      if (action === 'Vol +') setTvVolume(v => Math.min(100, v + 5));
+      if (action === 'Vol -') setTvVolume(v => Math.max(0, v - 5));
+      if (action === 'Mute') setTvMuted(true);
+      if (action === 'Unmute') setTvMuted(false);
+      if (action.startsWith('Input:')) setTvInput(value);
+    }
+  }, [remoteCommand]);
+
+  const sendCommand = (command, extraValue = null) => {
+    setTvAction(command);
+    
+    saveData({
+      remoteCommand: {
+        action: command,
+        value: extraValue,
+        timestamp: Date.now()
+      }
+    });
+    
+    console.log(`Command ${command} sent to Firebase`);
+  };
+
   const tvDisplay = tvPower ? `Connected • ${tvInput}` : "Powered Off";
   const tvVolumeLabel = tvMuted ? 'Muted' : `${tvVolume}%`;
-
-  const sendCommand = (command) => {
-    setTvAction(command);
-    console.log(`Sending ${command} to ${tvBrand} TV at IP: 192.168.x.x`);
-  };
 
   return (
     <section className="grid gap-6 xl:grid-cols-[1fr_400px] max-w-6xl mx-auto">
@@ -28,10 +56,9 @@ export default function SmartRemote() {
           <p className="text-cyan-300 font-semibold uppercase tracking-[0.4em] text-xs mb-2">Remote Control</p>
           <h2 className="text-3xl font-black">Smart System</h2>
           <p className="mt-4 text-slate-400 text-sm leading-relaxed">
-            Control your devices via local network IP. Select your TV brand to sync protocols.
+            Control your devices via Cloud Sync. Commands are relayed in real-time.
           </p>
           
-          {/* Brand Selection */}
           <div className="mt-6 inline-block relative">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2 ml-1">Device Brand</p>
             <button
@@ -57,7 +84,6 @@ export default function SmartRemote() {
           </div>
         </div>
 
-        {/* Display Screen */}
         <div className="mt-8 rounded-[1.5rem] border border-slate-800 bg-black/60 p-5 shadow-inner">
           <div className="flex items-center justify-between">
             <div>
@@ -76,24 +102,30 @@ export default function SmartRemote() {
       <div className="rounded-[2.5rem] border border-slate-800 bg-slate-900/70 p-8 shadow-2xl">
         <div className="flex flex-col items-center gap-8">
           
-          {/* Power & Mute - Equal Row */}
           <div className="grid grid-cols-2 gap-4 w-full">
             <button
-              onClick={() => { setTvPower(!tvPower); sendCommand(tvPower ? 'Power Off' : 'Power On'); }}
+              onClick={() => { 
+                const newState = !tvPower;
+                setTvPower(newState); 
+                sendCommand(newState ? 'Power On' : 'Power Off'); 
+              }}
               className={`rounded-2xl py-4 text-xs font-black transition-all ${tvPower ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-slate-800 text-slate-400'}`}
             >
               POWER
             </button>
             <button
               disabled={!tvPower}
-              onClick={() => { setTvMuted(!tvMuted); sendCommand(tvMuted ? 'Unmute' : 'Mute'); }}
+              onClick={() => { 
+                const newMute = !tvMuted;
+                setTvMuted(newMute); 
+                sendCommand(newMute ? 'Mute' : 'Unmute'); 
+              }}
               className="rounded-2xl bg-slate-800 py-4 text-xs font-black text-slate-200 hover:bg-slate-700 disabled:opacity-30"
             >
               {tvMuted ? 'UNMUTE' : 'MUTE'}
             </button>
           </div>
 
-          {/* D-Pad (Directional Buttons) */}
           <div className="relative bg-slate-950/50 p-4 rounded-full border border-slate-800 shadow-inner">
             <div className="grid grid-cols-3 grid-rows-3 gap-2">
               <div />
@@ -116,19 +148,24 @@ export default function SmartRemote() {
             </div>
           </div>
 
-          {/* Volume & Input */}
           <div className="grid grid-cols-2 gap-4 w-full">
             <div className="flex flex-col gap-2">
               <button
                 disabled={!tvPower}
-                onClick={() => { setTvVolume(v => Math.min(100, v + 5)); sendCommand('Vol +'); }}
+                onClick={() => { 
+                  setTvVolume(v => Math.min(100, v + 5)); 
+                  sendCommand('Vol +'); 
+                }}
                 className="rounded-2xl bg-slate-800 py-3 hover:bg-slate-700 text-slate-200 disabled:opacity-30"
               >
                 VOL +
               </button>
               <button
                 disabled={!tvPower}
-                onClick={() => { setTvVolume(v => Math.max(0, v - 5)); sendCommand('Vol -'); }}
+                onClick={() => { 
+                  setTvVolume(v => Math.max(0, v - 5)); 
+                  sendCommand('Vol -'); 
+                }}
                 className="rounded-2xl bg-slate-800 py-3 hover:bg-slate-700 text-slate-200 disabled:opacity-30"
               >
                 VOL -
@@ -139,14 +176,13 @@ export default function SmartRemote() {
               onClick={() => {
                 const next = tvInput === 'HDMI 1' ? 'HDMI 2' : 'HDMI 1';
                 setTvInput(next);
-                sendCommand(`Input: ${next}`);
+                sendCommand(`Input: ${next}`, next);
               }}
               className="h-full rounded-2xl border-2 border-slate-800 bg-transparent py-3 text-xs font-bold text-slate-400 hover:border-cyan-500/50 hover:text-cyan-500 transition-all disabled:opacity-30"
             >
               SOURCE<br/>INPUT
             </button>
           </div>
-
         </div>
       </div>
     </section>

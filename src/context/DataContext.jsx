@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase'; 
 
-const DataContext = createContext();
+export const DataContext = createContext();
 
 const getOrCreateDeviceId = () => {
   let id = localStorage.getItem('power_scan_device_id');
@@ -16,6 +16,7 @@ const getOrCreateDeviceId = () => {
 export const DataProvider = ({ children }) => {
   const [devices, setDevices] = useState([]);
   const [scheduleEntries, setScheduleEntries] = useState({});
+  const [remoteCommand, setRemoteCommand] = useState(null); 
   const [settings, setSettings] = useState({
     darkMode: true,
     notifications: true,
@@ -35,6 +36,7 @@ export const DataProvider = ({ children }) => {
         const data = doc.data();
         setDevices(data.devices || []);
         setScheduleEntries(data.scheduleEntries || {});
+        setRemoteCommand(data.remoteCommand || null); 
         if (data.settings) {
           setSettings(data.settings);
         }
@@ -56,6 +58,7 @@ export const DataProvider = ({ children }) => {
       devices, setDevices, 
       settings, setSettings,
       scheduleEntries, setScheduleEntries, 
+      remoteCommand,
       saveData 
     }}>
       {children}
